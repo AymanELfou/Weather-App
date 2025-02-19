@@ -1,11 +1,9 @@
-import './App.css';
-import WheatherApp from './Components/WheatherApp';
-
+import WeatherApp from "./Components/WeatherApp";
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-       <WheatherApp/>
+        <WeatherApp/>
        
       </header>
     </div>
