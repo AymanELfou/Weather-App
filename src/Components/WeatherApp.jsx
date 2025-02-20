@@ -1,32 +1,39 @@
 import './style.css';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 export default function WeatherApp() {
     const [city, setCity] = useState("");
     const [weather, setWeather] = useState(null);
     const [error, setError] = useState(false);
-  
-    const apiKey = "b468aef8f21dc40990b0826825a3213b";
+
+    const apiKey = "7f0a8492114966345169cb1a198e9c30";
     const apiUrl = "https://api.openweathermap.org/data/2.5/weather?units=metric&q=";
 
     async function checkWeather() {
-        if (!city) return;
+        if (!city.trim()) return;
+
         try {
             const response = await fetch(`${apiUrl}${city}&appid=${apiKey}`);
             const data = await response.json();
-            if (response.status === 404) {
+            console.log("API Response:", data); // Vérifier la réponse
+
+            if (response.status === 404 || data.cod === "404") {
                 setError(true);
                 setWeather(null);
             } else {
-                setWeather(data);
                 setError(false);
+                setWeather(data);
             }
-        } catch (error) {
-            console.error("Error fetching weather data:", error);
+        } catch (err) {
+            console.error("Error fetching weather data:", err);
             setError(true);
             setWeather(null);
         }
     }
+
+    useEffect(() => {
+        console.log("Weather state updated:", weather);
+    }, [weather]); // Vérifier si l'état change
 
     return (
         <div className="weather-card">
@@ -41,8 +48,10 @@ export default function WeatherApp() {
                     <img src="images/search.png" alt="Search" />
                 </button>
             </div>
+
             {error && <div className="error">Invalid city name</div>}
-            {weather && (
+
+            {weather && weather.main && weather.weather && (
                 <div className="current-weather">
                     <img 
                         src={`images/${weather.weather[0].main.toLowerCase()}.png`} 
